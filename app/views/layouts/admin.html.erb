@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Panel</title>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+  <%= stylesheet_link_tag 'admin', media: 'all' %>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div class="admin-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h2>Admin Panel</h2>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <ul>
+          <li class="nav-item <%= 'active' if controller_name == 'users' %>">
+            <a href="#" class="nav-link" data-toggle="submenu">
+              <i class="fas fa-users"></i>
+              <span>Users</span>
+              <i class="fas fa-chevron-down arrow"></i>
+            </a>
+            <ul class="submenu">
+              <li><%= link_to 'List Users', users_path, class: 'submenu-link' %></li>
+              <li><%= link_to 'Create User', new_user_path, class: 'submenu-link' %></li>
+            </ul>
+          </li>
+          
+          <li class="nav-item <%= 'active' if controller_name == 'teams' %>">
+            <a href="#" class="nav-link" data-toggle="submenu">
+              <i class="fas fa-user-group"></i>
+              <span>Teams</span>
+              <i class="fas fa-chevron-down arrow"></i>
+            </a>
+            <ul class="submenu">
+              <li><%= link_to 'List Teams', teams_path, class: 'submenu-link' %></li>
+              <li><%= link_to 'Create Team', new_team_path, class: 'submenu-link' %></li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Header -->
+      <header class="header">
+        <div class="header-left">
+          <button class="menu-toggle" id="menuToggle">
+            <i class="fas fa-bars"></i>
+          </button>
+        </div>
+        
+        <div class="header-right">
+          <div class="user-menu">
+            <button class="user-avatar" id="userMenuToggle">
+              <% if defined?(current_user) && current_user&.avatar.present? %>
+                <%= image_tag current_user.avatar, alt: current_user.name %>
+              <% else %>
+                <img src="https://ui-avatars.com/api/?name=<%= (defined?(current_user) && current_user&.name) || 'Admin' %>&background=4F46E5&color=fff" alt="Avatar">
+              <% end %>
+            </button>
+            <div class="dropdown-menu" id="userDropdown">
+              <div class="dropdown-header">
+                <strong><%= (defined?(current_user) && current_user&.name) || 'Admin' %></strong>
+                <span><%= (defined?(current_user) && current_user&.email) || 'admin@example.com' %></span>
+              </div>
+              <div class="dropdown-divider"></div>
+              <% if defined?(logout_path) %>
+                <%= button_to logout_path, method: :delete, class: 'dropdown-item', style: 'border: none; background: none; text-align: left; width: 100%; cursor: pointer;', data: { confirm: 'Bạn có chắc muốn đăng xuất?' } do %>
+                  <i class="fas fa-sign-out-alt"></i> Logout
+                <% end %>
+              <% else %>
+                <a href="#" class="dropdown-item">
+                  <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Page Content -->
+      <main class="content">
+        <% if notice %>
+          <div class="alert alert-success">
+            <i class="fas fa-check-circle"></i> <%= notice %>
+          </div>
+        <% end %>
+        
+        <% if alert %>
+          <div class="alert alert-danger">
+            <i class="fas fa-exclamation-circle"></i> <%= alert %>
+          </div>
+        <% end %>
+        
+        <%= yield %>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    // Toggle sidebar submenu
+    document.querySelectorAll('[data-toggle="submenu"]').forEach(item => {
+      item.addEventListener('click', function(e) {
+        e.preventDefault();
+        const parent = this.parentElement;
+        parent.classList.toggle('open');
+      });
+    });
+
+    // Toggle user dropdown
+    const userMenuToggle = document.getElementById('userMenuToggle');
+    const userDropdown = document.getElementById('userDropdown');
+    
+    userMenuToggle.addEventListener('click', function(e) {
+      e.stopPropagation();
+      userDropdown.classList.toggle('show');
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+      if (!userMenuToggle.contains(e.target) && !userDropdown.contains(e.target)) {
+        userDropdown.classList.remove('show');
+      }
+    });
+
+    // Toggle sidebar on mobile
+    const menuToggle = document.getElementById('menuToggle');
+    const sidebar = document.querySelector('.sidebar');
+    
+    menuToggle.addEventListener('click', function() {
+      sidebar.classList.toggle('active');
+    });
+  </script>
+</body>
+</html>

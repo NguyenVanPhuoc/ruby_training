@@ -1,0 +1,74 @@
+<div class="page-header">
+  <h1>Danh sách User</h1>
+  <p>Quản lý tất cả người dùng trong hệ thống</p>
+</div>
+
+<div class="actions-bar">
+  <%= form_with url: users_path, method: :get, local: true, class: 'search-form' do |f| %>
+    <%= text_field_tag :search, params[:search], placeholder: "Tìm kiếm theo tên, email...", class: 'search-input' %>
+    <%= submit_tag 'Tìm kiếm', class: 'btn btn-secondary' %>
+  <% end %>
+  
+  <%= link_to new_user_path, class: 'btn btn-primary' do %>
+    <i class="fas fa-plus"></i>
+    Thêm User
+  <% end %>
+</div>
+
+<div class="table-container">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Tên</th>
+        <th>Email</th>
+        <th>Team</th>
+        <th>Avatar</th>
+        <th>Hành động</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if @users.any? %>
+        <% @users.each do |user| %>
+          <tr>
+            <td><strong><%= user.name %></strong></td>
+            <td><%= user.email %></td>
+            <td>
+              <% if user.team.present? %>
+                <span style="background: #dbeafe; color: #1e40af; padding: 4px 12px; border-radius: 20px; font-size: 13px;">
+                  <%= user.team.name %>
+                </span>
+              <% else %>
+                <span style="color: #94a3b8;">Chưa có team</span>
+              <% end %>
+            </td>
+            <td>
+              <% if user.avatar.present? %>
+                <%= image_tag user.avatar, class: 'avatar-sm' %>
+              <% else %>
+                <img src="https://ui-avatars.com/api/?name=<%= user.name %>&background=6366f1&color=fff" alt="<%= user.name %>" class="avatar-sm">
+              <% end %>
+            </td>
+            <td>
+              <div class="action-links">
+                <%= link_to edit_user_path(user), class: 'action-link' do %>
+                  <i class="fas fa-edit"></i> Sửa
+                <% end %>
+                <%= link_to user, method: :delete, data: { confirm: 'Bạn có chắc chắn muốn xóa user này?' }, class: 'action-link danger' do %>
+                  <i class="fas fa-trash"></i> Xóa
+                <% end %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      <% else %>
+        <tr>
+          <td colspan="5" style="text-align: center; padding: 40px; color: #94a3b8;">
+            <i class="fas fa-inbox" style="font-size: 48px; margin-bottom: 16px; display: block;"></i>
+            <strong>Không tìm thấy user nào</strong>
+            <p style="margin-top: 8px;">Hãy thêm user mới hoặc thử tìm kiếm khác</p>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

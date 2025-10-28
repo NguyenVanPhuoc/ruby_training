@@ -1,0 +1,3 @@
+<p>Chào <%= @user.email %>,</p>
+<p>Nhấn link dưới để đặt lại mật khẩu:</p>
+<p><%= link_to "Đặt lại mật khẩu", edit_password_url(token: @token) %></p>

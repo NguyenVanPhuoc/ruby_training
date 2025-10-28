@@ -1,0 +1,64 @@
+<div class="page-header">
+  <h1>Danh sách Team</h1>
+  <p>Quản lý tất cả các team trong hệ thống</p>
+</div>
+
+<div class="actions-bar">
+  <%= form_with url: teams_path, method: :get, local: true, class: 'search-form' do |f| %>
+    <%= text_field_tag :search, params[:search], placeholder: "Tìm kiếm team...", class: 'search-input' %>
+    <%= submit_tag 'Tìm kiếm', class: 'btn btn-secondary' %>
+  <% end %>
+  
+  <%= link_to new_team_path, class: 'btn btn-primary' do %>
+    <i class="fas fa-plus"></i>
+    Thêm Team
+  <% end %>
+</div>
+
+<div class="table-container">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Tên Team</th>
+        <th>Mô tả</th>
+        <th>Số thành viên</th>
+        <th>Ngày tạo</th>
+        <th>Hành động</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if @teams.any? %>
+        <% @teams.each do |team| %>
+          <tr>
+            <td><strong><%= team.name %></strong></td>
+            <td><%= team.description.present? ? team.description : 'Chưa có mô tả' %></td>
+            <td>
+              <span style="background: #dbeafe; color: #1e40af; padding: 4px 12px; border-radius: 20px; font-size: 13px;">
+                <%= team.users.count %> thành viên
+              </span>
+            </td>
+            <td style="color: #64748b;"><%= team.created_at.strftime('%d/%m/%Y') %></td>
+            <td>
+              <div class="action-links">
+                <%= link_to edit_team_path(team), class: 'action-link' do %>
+                  <i class="fas fa-edit"></i> Sửa
+                <% end %>
+                <%= link_to team, method: :delete, data: { confirm: 'Bạn có chắc chắn muốn xóa team này?' }, class: 'action-link danger' do %>
+                  <i class="fas fa-trash"></i> Xóa
+                <% end %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      <% else %>
+        <tr>
+          <td colspan="5" style="text-align: center; padding: 40px; color: #94a3b8;">
+            <i class="fas fa-inbox" style="font-size: 48px; margin-bottom: 16px; display: block;"></i>
+            <strong>Không tìm thấy team nào</strong>
+            <p style="margin-top: 8px;">Hãy thêm team mới hoặc thử tìm kiếm khác</p>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
