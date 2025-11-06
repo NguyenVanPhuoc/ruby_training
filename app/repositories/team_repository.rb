@@ -1,6 +1,6 @@
 class TeamRepository
   def self.search(keyword)
-    Team.where('name ILIKE ?', "%#{keyword}%")
+    Team.where('name LIKE ?', "%#{keyword}%")
   end
 
   def self.all

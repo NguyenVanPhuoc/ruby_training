@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-  layout 'admin'  # Sử dụng admin layout
+  layout 'admin'
   before_action :set_user, only: [:edit, :update, :destroy]
 
   def index
@@ -17,7 +17,7 @@ class UsersController < ApplicationController
       redirect_to users_path, notice: 'Tạo user thành công.'
     else
       @teams = TeamRepository.all
-      render :new
+      render :new, status: :unprocessable_entity
     end
   end
 
@@ -30,7 +30,7 @@ class UsersController < ApplicationController
       redirect_to users_path, notice: 'Cập nhật user thành công.'
     else
       @teams = TeamRepository.all
-      render :edit
+      render :edit, status: :unprocessable_entity
     end
   end
 

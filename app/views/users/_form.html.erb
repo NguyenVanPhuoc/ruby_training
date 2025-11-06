@@ -1,62 +1,173 @@
-<div class="page-header">
-  <h1><%= user.new_record? ? 'Tạo User Mới' : 'Chỉnh sửa User' %></h1>
-  <p><%= user.new_record? ? 'Thêm người dùng mới vào hệ thống' : 'Cập nhật thông tin người dùng' %></p>
+<div class="page-header page-header-center">
+  <h1><%= user.new_record? ? 'Thêm mới' : 'Chỉnh sửa' %></h1>
 </div>
 
-<div class="form-card">
-  <%= form_with(model: user, local: true) do |form| %>
-    <% if user.errors.any? %>
-      <div class="alert alert-danger" style="margin-bottom: 24px;">
-        <i class="fas fa-exclamation-circle"></i>
-        <div>
-          <strong><%= pluralize(user.errors.count, "lỗi") %> ngăn không cho lưu:</strong>
-          <ul style="margin: 8px 0 0 24px;">
-            <% user.errors.full_messages.each do |message| %>
-              <li><%= message %></li>
-            <% end %>
-          </ul>
+<div class="card form-card">
+  <div class="card-header">
+    <p><%= user.new_record? ? 'Thêm mới người dùng' : 'Cập nhật thông tin người dùng' %></p>
+  </div>
+  <%= form_with(model: user, local: true, html: { multipart: true }) do |form| %>
+    <div class="card-body">
+      <% if user.errors.any? %>
+        <div class="alert alert-danger" style="margin-bottom: 24px;">
+          <i class="fas fa-exclamation-circle"></i>
+          <div>
+            <strong><%= pluralize(user.errors.count, "lỗi") %> ngăn không cho lưu:</strong>
+            <ul style="margin: 8px 0 0 24px;">
+              <% user.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        </div>
+      <% end %>
+
+      <div class="form-group">
+        <%= form.label :name, "Tên", class: 'form-label' %>
+        <%= form.text_field :name, class: 'form-control', placeholder: 'Nhập tên user' %>
+      </div>
+
+      <div class="form-group">
+        <%= form.label :email, "Email", class: 'form-label' %>
+        <%= form.email_field :email, class: 'form-control', placeholder: 'email@example.com' %>
+      </div>
+
+      <div class="form-group">
+        <%= form.label :password, "Mật khẩu", class: 'form-label' %>
+        <%= form.password_field :password, class: 'form-control', placeholder: user.new_record? ? 'Nhập mật khẩu' : 'Để trống nếu không thay đổi' %>
+        <% unless user.new_record? %>
+          <small style="color: #64748b; font-size: 13px; display: block; margin-top: 4px;">
+            Để trống nếu không muốn thay đổi mật khẩu
+          </small>
+        <% end %>
+      </div>
+
+      <div class="form-group">
+        <%= form.label :team_id, "Team", class: 'form-label' %>
+        <%= form.collection_select :team_id, Team.all, :id, :name, 
+            { prompt: 'Chọn team'}, 
+            { class: 'form-control' } %>
+      </div>
+
+      <div class="form-group">
+        <%= form.label :avatar, "Avatar", class: 'form-label' %>
+        
+        <div class="avatar-upload-container">
+          <!-- Preview Container -->
+          <div class="avatar-preview-wrapper">
+            <div class="avatar-preview-box" id="avatar-preview-box">
+              <% if form.object.persisted? && form.object.avatar.present? %>
+                <img src="<%= form.object.avatar %>" alt="Avatar" class="avatar-image" id="avatar-image">
+              <% else %>
+                <div class="avatar-placeholder" id="avatar-placeholder">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                  <span class="placeholder-text">Chưa có avatar</span>
+                </div>
+              <% end %>
+              
+              <!-- Overlay khi hover -->
+              <div class="avatar-overlay">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="17 8 12 3 7 8"></polyline>
+                  <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                <span><%= form.object.persisted? && form.object.avatar.present? ? 'Thay đổi' : 'Chọn ảnh' %></span>
+              </div>
+            </div>
+            
+            <!-- File Input (hidden) -->
+            <%= form.file_field :avatar, 
+                id: 'avatar-file-input',
+                class: 'avatar-file-input', 
+                accept: 'image/jpeg,image/jpg,image/png,image/gif,image/webp',
+                onchange: 'previewAvatar(this)' %>
+            
+            <!-- Click label to trigger file input -->
+            <label for="avatar-file-input" class="avatar-upload-label">
+              Nhấn vào ảnh để <%= form.object.persisted? && form.object.avatar.present? ? 'thay đổi' : 'chọn ảnh' %>
+            </label>
+          </div>
+          
+          <% if form.object.errors[:avatar].any? %>
+            <div class="avatar-error">
+              <%= form.object.errors[:avatar].join(', ') %>
+            </div>
+          <% end %>
+          
+          <small class="avatar-hint">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 4px;">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="16" x2="12" y2="12"></line>
+              <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+            Định dạng: JPG, PNG, GIF, WEBP • Kích thước tối đa: 5MB
+          </small>
         </div>
       </div>
-    <% end %>
-
-    <div class="form-group">
-      <%= form.label :name, "Tên", class: 'form-label' %>
-      <%= form.text_field :name, class: 'form-control', placeholder: 'Nhập tên user' %>
     </div>
-
-    <div class="form-group">
-      <%= form.label :email, "Email", class: 'form-label' %>
-      <%= form.email_field :email, class: 'form-control', placeholder: 'email@example.com' %>
-    </div>
-
-    <div class="form-group">
-      <%= form.label :password, "Mật khẩu", class: 'form-label' %>
-      <%= form.password_field :password, class: 'form-control', placeholder: user.new_record? ? 'Nhập mật khẩu' : 'Để trống nếu không thay đổi' %>
-      <% unless user.new_record? %>
-        <small style="color: #64748b; font-size: 13px; display: block; margin-top: 4px;">
-          Để trống nếu không muốn thay đổi mật khẩu
-        </small>
-      <% end %>
-    </div>
-
-    <div class="form-group">
-      <%= form.label :team_id, "Team", class: 'form-label' %>
-      <%= form.collection_select :team_id, Team.all, :id, :name, 
-          { prompt: 'Chọn team', include_blank: 'Không thuộc team nào' }, 
-          { class: 'form-control' } %>
-    </div>
-
-    <div class="form-group">
-      <%= form.label :avatar, "Avatar URL", class: 'form-label' %>
-      <%= form.text_field :avatar, class: 'form-control', placeholder: 'https://example.com/avatar.jpg' %>
-      <small style="color: #64748b; font-size: 13px; display: block; margin-top: 4px;">
-        Nhập URL của ảnh avatar
-      </small>
-    </div>
-
-    <div class="form-actions">
-      <%= form.submit user.new_record? ? 'Tạo User' : 'Cập nhật', class: 'btn btn-primary' %>
-      <%= link_to 'Hủy', users_path, class: 'btn btn-secondary' %>
+    <div class="card-footer text-body-secondary">
+      <div class="form-actions">
+        <%= link_to 'Trở lại', users_path, class: 'btn btn-secondary' %>
+        <%= form.submit user.new_record? ? 'Tạo mới' : 'Cập nhật', class: 'btn btn-primary' %>
+      </div>
     </div>
   <% end %>
 </div>
+
+
+<script>
+  document.getElementById("avatar-preview-box").addEventListener("click", function() {
+    document.getElementById("avatar-file-input").click();
+  });
+  function previewAvatar(input) {
+    const previewBox = document.getElementById('avatar-preview-box');
+    const avatarImage = document.getElementById('avatar-image');
+    const placeholder = document.getElementById('avatar-placeholder');
+    
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      
+      // Validate file size (5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert('Kích thước file quá lớn! Vui lòng chọn file nhỏ hơn 5MB.');
+        input.value = '';
+        return;
+      }
+      
+      // Validate file type
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+      if (!allowedTypes.includes(file.type)) {
+        alert('Định dạng file không hợp lệ! Vui lòng chọn file JPG, PNG, GIF hoặc WEBP.');
+        input.value = '';
+        return;
+      }
+      
+      const reader = new FileReader();
+      
+      reader.onload = function(e) {
+        // Remove placeholder if exists
+        if (placeholder) {
+          placeholder.remove();
+        }
+        
+        // Create or update image
+        if (avatarImage) {
+          avatarImage.src = e.target.result;
+        } else {
+          const newImage = document.createElement('img');
+          newImage.src = e.target.result;
+          newImage.alt = 'Avatar';
+          newImage.className = 'avatar-image';
+          newImage.id = 'avatar-image';
+          previewBox.insertBefore(newImage, previewBox.firstChild);
+        }
+      }
+      
+      reader.readAsDataURL(file);
+    }
+  }
+</script>

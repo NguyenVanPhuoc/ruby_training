@@ -7,6 +7,7 @@
   <%= stylesheet_link_tag 'admin', media: 'all' %>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css">
 </head>
 <body>
   <div class="admin-container">
@@ -18,27 +19,27 @@
       
       <nav class="sidebar-nav">
         <ul>
-          <li class="nav-item <%= 'active' if controller_name == 'users' %>">
+          <li class="nav-item <%= 'active' if controller_name == 'users' %> <%= 'open' if controller_name == 'users' || (controller_name == 'user' && action_name != 'dashboard') %>">
             <a href="#" class="nav-link" data-toggle="submenu">
               <i class="fas fa-users"></i>
               <span>Users</span>
               <i class="fas fa-chevron-down arrow"></i>
             </a>
             <ul class="submenu">
-              <li><%= link_to 'List Users', users_path, class: 'submenu-link' %></li>
-              <li><%= link_to 'Create User', new_user_path, class: 'submenu-link' %></li>
+              <li><%= link_to 'List Users', users_path, class: "submenu-link #{'active' if current_page?(users_path) || (controller_name == 'users' && action_name == 'index')}" %></li>
+              <li><%= link_to 'Create User', new_user_path, class: "submenu-link #{'active' if current_page?(new_user_path) || (controller_name == 'users' && action_name == 'new')}" %></li>
             </ul>
           </li>
           
-          <li class="nav-item <%= 'active' if controller_name == 'teams' %>">
+          <li class="nav-item <%= 'active' if controller_name == 'teams' %> <%= 'open' if controller_name == 'teams' %>">
             <a href="#" class="nav-link" data-toggle="submenu">
               <i class="fas fa-user-group"></i>
               <span>Teams</span>
               <i class="fas fa-chevron-down arrow"></i>
             </a>
             <ul class="submenu">
-              <li><%= link_to 'List Teams', teams_path, class: 'submenu-link' %></li>
-              <li><%= link_to 'Create Team', new_team_path, class: 'submenu-link' %></li>
+              <li><%= link_to 'List Teams', teams_path, class: "submenu-link #{'active' if current_page?(teams_path) || (controller_name == 'teams' && action_name == 'index')}" %></li>
+              <li><%= link_to 'Create Team', new_team_path, class: "submenu-link #{'active' if current_page?(new_team_path) || (controller_name == 'teams' && action_name == 'new')}" %></li>
             </ul>
           </li>
         </ul>
@@ -103,39 +104,50 @@
     </div>
   </div>
 
-  <script>
-    // Toggle sidebar submenu
-    document.querySelectorAll('[data-toggle="submenu"]').forEach(item => {
-      item.addEventListener('click', function(e) {
-        e.preventDefault();
-        const parent = this.parentElement;
-        parent.classList.toggle('open');
-      });
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.min.js"></script>
+<script>
+  // Toggle sidebar submenu
+  document.querySelectorAll('[data-toggle="submenu"]').forEach(item => {
+    item.addEventListener('click', function(e) {
+      e.preventDefault();
+      const parent = this.parentElement;
+      parent.classList.toggle('open');
     });
+  });
 
-    // Toggle user dropdown
-    const userMenuToggle = document.getElementById('userMenuToggle');
-    const userDropdown = document.getElementById('userDropdown');
-    
-    userMenuToggle.addEventListener('click', function(e) {
-      e.stopPropagation();
-      userDropdown.classList.toggle('show');
-    });
+  // Toggle user dropdown
+  const userMenuToggle = document.getElementById('userMenuToggle');
+  const userDropdown = document.getElementById('userDropdown');
+  
+  userMenuToggle.addEventListener('click', function(e) {
+    e.stopPropagation();
+    userDropdown.classList.toggle('show');
+  });
 
-    // Close dropdown when clicking outside
-    document.addEventListener('click', function(e) {
-      if (!userMenuToggle.contains(e.target) && !userDropdown.contains(e.target)) {
-        userDropdown.classList.remove('show');
-      }
-    });
+  // Close dropdown when clicking outside
+  document.addEventListener('click', function(e) {
+    if (!userMenuToggle.contains(e.target) && !userDropdown.contains(e.target)) {
+      userDropdown.classList.remove('show');
+    }
+  });
 
-    // Toggle sidebar on mobile
-    const menuToggle = document.getElementById('menuToggle');
-    const sidebar = document.querySelector('.sidebar');
-    
-    menuToggle.addEventListener('click', function() {
-      sidebar.classList.toggle('active');
+  // Toggle sidebar on mobile
+  const menuToggle = document.getElementById('menuToggle');
+  const sidebar = document.querySelector('.sidebar');
+  
+  menuToggle.addEventListener('click', function() {
+    sidebar.classList.toggle('active');
+  });
+
+  // Auto-open active submenu on page load
+  document.addEventListener('DOMContentLoaded', function() {
+    // Find all active nav items and open their submenus
+    document.querySelectorAll('.nav-item.active').forEach(item => {
+      item.classList.add('open');
     });
-  </script>
+  });
+</script>
 </body>
 </html>

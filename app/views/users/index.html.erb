@@ -1,6 +1,5 @@
 <div class="page-header">
-  <h1>Danh sách User</h1>
-  <p>Quản lý tất cả người dùng trong hệ thống</p>
+  <h1>Danh sách người dùng</h1>
 </div>
 
 <div class="actions-bar">
@@ -11,7 +10,7 @@
   
   <%= link_to new_user_path, class: 'btn btn-primary' do %>
     <i class="fas fa-plus"></i>
-    Thêm User
+    Thêm mới
   <% end %>
 </div>
 
@@ -50,11 +49,15 @@
             </td>
             <td>
               <div class="action-links">
-                <%= link_to edit_user_path(user), class: 'action-link' do %>
-                  <i class="fas fa-edit"></i> Sửa
+                <%= link_to edit_user_path(user), class: 'action-link btn btn-primary' do %>
+                  <i class="fas fa-edit"></i>
                 <% end %>
-                <%= link_to user, method: :delete, data: { confirm: 'Bạn có chắc chắn muốn xóa user này?' }, class: 'action-link danger' do %>
-                  <i class="fas fa-trash"></i> Xóa
+                <%= button_to user_path(user), 
+                              method: :delete,
+                              onclick: "return confirm('Bạn có chắc chắn muốn xóa user #{user.name}?')",
+                              class: 'action-link danger btn btn-link p-0 border-0 bg-transparent text-decoration-underline',
+                              form: { class: 'd-inline btn btn-danger' } do %>
+                  <i class="fas fa-trash"></i>
                 <% end %>
               </div>
             </td>

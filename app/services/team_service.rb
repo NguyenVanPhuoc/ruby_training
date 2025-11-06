@@ -4,12 +4,12 @@ class TeamService
   end
 
   def self.update_team(id, params)
-    team = Team.find(id)
+    team = TeamRepository.find(id)
     team.update(params)
     team
   end
 
   def self.destroy_team(id)
-    Team.find(id).destroy
+    TeamRepository.find(id).destroy
   end
 end

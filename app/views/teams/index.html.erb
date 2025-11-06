@@ -1,6 +1,5 @@
 <div class="page-header">
   <h1>Danh sách Team</h1>
-  <p>Quản lý tất cả các team trong hệ thống</p>
 </div>
 
 <div class="actions-bar">
@@ -11,7 +10,7 @@
   
   <%= link_to new_team_path, class: 'btn btn-primary' do %>
     <i class="fas fa-plus"></i>
-    Thêm Team
+    Thêm mới
   <% end %>
 </div>
 
@@ -40,11 +39,15 @@
             <td style="color: #64748b;"><%= team.created_at.strftime('%d/%m/%Y') %></td>
             <td>
               <div class="action-links">
-                <%= link_to edit_team_path(team), class: 'action-link' do %>
-                  <i class="fas fa-edit"></i> Sửa
+                <%= link_to edit_team_path(team), class: 'action-link btn btn-primary' do %>
+                  <i class="fas fa-edit"></i>
                 <% end %>
-                <%= link_to team, method: :delete, data: { confirm: 'Bạn có chắc chắn muốn xóa team này?' }, class: 'action-link danger' do %>
-                  <i class="fas fa-trash"></i> Xóa
+                <%= button_to team_path(team), 
+                              method: :delete,
+                              onclick: "return confirm('Bạn có chắc chắn muốn xóa team #{team.name}?')",
+                              class: 'action-link danger btn btn-link p-0 border-0 bg-transparent text-decoration-underline',
+                              form: { class: 'd-inline btn btn-danger' } do %>
+                  <i class="fas fa-trash"></i>
                 <% end %>
               </div>
             </td>
