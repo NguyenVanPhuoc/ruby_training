@@ -1,6 +1,12 @@
 Rails.application.routes.draw do
   resources :users
-  resources :teams
+  resources :teams do
+    member do
+      get :manage_members
+      post :add_member
+      delete :remove_member
+    end
+  end
 
   get    'login',  to: 'auth#login'
   post   'post_login',  to: 'auth#handle_login', as: :post_login

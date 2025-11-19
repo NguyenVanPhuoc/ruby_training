@@ -8,29 +8,30 @@
   </div>
   <%= form_with(model: user, local: true, html: { multipart: true }) do |form| %>
     <div class="card-body">
-      <% if user.errors.any? %>
-        <div class="alert alert-danger" style="margin-bottom: 24px;">
-          <i class="fas fa-exclamation-circle"></i>
-          <div>
-            <strong><%= pluralize(user.errors.count, "lỗi") %> ngăn không cho lưu:</strong>
-            <ul style="margin: 8px 0 0 24px;">
-              <% user.errors.full_messages.each do |message| %>
-                <li><%= message %></li>
-              <% end %>
-            </ul>
-          </div>
-        </div>
-      <% end %>
-
       <div class="form-group">
         <%= form.label :name, "Tên", class: 'form-label' %>
         <%= form.text_field :name, class: 'form-control', placeholder: 'Nhập tên user' %>
+        <!-- SỬA: @user.errors → user.errors -->
+        <% user.errors[:name].each do |message| %>
+          <div class="text-danger"><%= message %></div>
+        <% end %>
       </div>
 
       <div class="form-group">
         <%= form.label :email, "Email", class: 'form-label' %>
         <%= form.email_field :email, class: 'form-control', placeholder: 'email@example.com' %>
+        <!-- SỬA: @user.errors → user.errors -->
+        <% user.errors[:email].each do |message| %>
+          <div class="text-danger"><%= message %></div>
+        <% end %>
       </div>
+
+      <% if @available_roles && current_user.super_admin? %>
+        <div class="form-group">
+          <%= form.label :role %>
+          <%= form.select :role, @available_roles, {}, class: 'form-control' %>
+        </div>
+      <% end %>
 
       <div class="form-group">
         <%= form.label :password, "Mật khẩu", class: 'form-label' %>
@@ -39,6 +40,18 @@
           <small style="color: #64748b; font-size: 13px; display: block; margin-top: 4px;">
             Để trống nếu không muốn thay đổi mật khẩu
           </small>
+        <% end %>
+        <!-- SỬA: @user.errors → user.errors -->
+        <% user.errors[:password].each do |message| %>
+          <div class="text-danger"><%= message %></div>
+        <% end %>
+      </div>
+      <div class="form-group">
+        <%= form.label :password_confirmation, "Xác nhận mật khẩu", class: 'form-label' %>
+        <%= form.password_field :password_confirmation, class: 'form-control'%>
+        <!-- SỬA: @user.errors → user.errors -->
+        <% user.errors[:password_confirmation].each do |message| %>
+          <div class="text-danger"><%= message %></div>
         <% end %>
       </div>
 
@@ -92,9 +105,10 @@
             </label>
           </div>
           
-          <% if form.object.errors[:avatar].any? %>
+          <!-- SỬA: form.object.errors → user.errors -->
+          <% if user.errors[:avatar].any? %>
             <div class="avatar-error">
-              <%= form.object.errors[:avatar].join(', ') %>
+              <%= user.errors[:avatar].join(', ') %>
             </div>
           <% end %>
           

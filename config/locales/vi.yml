@@ -1,0 +1,21 @@
+# config/locales/vi.yml
+vi:
+  activerecord:
+    errors:
+      messages:
+        blank: "không được để trống"
+        confirmation: "không khớp"
+        taken: "đã tồn tại"
+      models:
+        user:
+          attributes:
+            name:
+              blank: "Tên không được để trống"
+            email:
+              blank: "Email không được để trống"
+              taken: "Email đã tồn tại trong hệ thống"
+            password:
+              blank: "Mật khẩu không được để trống"
+              too_short: "Mật khẩu phải có ít nhất %{count} ký tự"
+            password_confirmation:
+              confirmation: "Xác nhận mật khẩu không khớp"

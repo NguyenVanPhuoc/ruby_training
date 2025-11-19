@@ -33,12 +33,17 @@
             <td><%= team.description.present? ? team.description : 'Chưa có mô tả' %></td>
             <td>
               <span style="background: #dbeafe; color: #1e40af; padding: 4px 12px; border-radius: 20px; font-size: 13px;">
-                <%= team.users.count %> thành viên
+                <%= team.member_count %> thành viên
               </span>
             </td>
             <td style="color: #64748b;"><%= team.created_at.strftime('%d/%m/%Y') %></td>
             <td>
               <div class="action-links">
+                <% if current_user.super_admin? || (current_user.admin? && current_user.team == team) %>
+                  <%= link_to manage_members_team_path(team), class: 'action-link btn btn-info' do %>
+                    <i class="fa fa-list-alt" aria-hidden="true"></i>
+                  <% end %>
+                <% end %>
                 <%= link_to edit_team_path(team), class: 'action-link btn btn-primary' do %>
                   <i class="fas fa-edit"></i>
                 <% end %>

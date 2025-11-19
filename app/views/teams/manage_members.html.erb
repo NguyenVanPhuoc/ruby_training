@@ -1,0 +1,93 @@
+<div class="manage-members-container">
+  <h1 class="page-title">🎯 Quản lý thành viên - <strong><%= @team.name %></strong></h1>
+
+  <!-- Thống kê -->
+  <div class="stats-bar">
+    <div class="stat-card">
+      <div class="stat-number"><%= @team_members.count %></div>
+      <div class="stat-label">Thành viên hiện tại</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number"><%= @available_users.count %></div>
+      <div class="stat-label">User khả dụng</div>
+    </div>
+  </div>
+
+  <!-- Thành viên hiện tại -->
+  <div class="section">
+    <h3 class="section-title">
+      <i>👥</i> Thành viên hiện tại
+    </h3>
+    
+    <% if @team_members.any? %>
+    <% @team_members.each do |user| %>
+      <div class="member-item">
+        <div class="user-info">
+          <div class="user-name">
+            <%= user.name %>
+            <span class="user-role role-<%= user.role&.parameterize || 'user' %>">
+              <%= user.role || 'user' %>
+            </span>
+            <% if user == current_user %>
+              <span class="badge bg-primary">Bạn</span>
+            <% end %>
+          </div>
+          <div class="user-email"><%= user.email %></div>
+        </div>
+        
+        <% if user != current_user %>
+          <%= button_to '🗑️ Xoá khỏi team', 
+              remove_member_team_path(@team, user_id: user.id), 
+              method: :delete, 
+              class: 'btn-custom btn-danger',
+              data: { confirm: "Bạn có chắc muốn xóa #{user.name} khỏi team?" } %>
+        <% else %>
+          <button class="btn-custom btn-secondary" disabled>Không thể xóa chính mình</button>
+        <% end %>
+      </div>
+    <% end %>
+  <% else %>
+      <div class="empty-state">
+        <div>📭</div>
+        <h4>Chưa có thành viên nào</h4>
+        <p>Thêm thành viên vào team để bắt đầu làm việc</p>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Thêm user vào team -->
+  <div class="section">
+    <h3 class="section-title">
+      <i>➕</i> Thêm user vào team
+    </h3>
+    
+    <% if @available_users.any? %>
+      <div class="available-users-list">
+        <% @available_users.each do |user| %>
+          <div class="user-item">
+            <div class="user-info">
+              <div class="user-name">
+                <%= user.name %>
+                <span class="user-role role-<%= user.role&.parameterize || 'user' %>">
+                  <%= user.role || 'user' %>
+                </span>
+              </div>
+              <div class="user-email"><%= user.email %></div>
+            </div>
+            <%= button_to '✅ Thêm vào team', 
+                add_member_team_path(@team, user_id: user.id), 
+                method: :post,
+                class: 'btn-custom btn-success',
+                data: { confirm: "Thêm #{user.name} vào team #{@team.name}?" } %>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="empty-state">
+        <div>😔</div>
+        <h4>Không có user nào khả dụng</h4>
+        <p>Tất cả user đã được thêm vào các team khác</p>
+      </div>
+    <% end %>
+  </div>
+</div>

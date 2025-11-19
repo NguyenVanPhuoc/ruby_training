@@ -15,6 +15,8 @@ Rails.application.configure do
   # Enable server timing.
   config.server_timing = true
 
+  config.i18n.default_locale = :vi
+
   config.action_mailer.delivery_method = :letter_opener_web
   config.action_mailer.perform_deliveries = true
   config.action_mailer.default_url_options = { host: "localhost", port: 3000 }
